@@ -5,8 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var exphbs  = require('express-handlebars');
+var bluebird = require('bluebird');
+const mongoose = require('mongoose');
+var session = require('express-session')
 
 var index = require('./routes/index');
+
+mongoose.Promise = bluebird;
+mongoose.connect('mongodb://localhost/shopping_dev', {useMongoClient: true})
 
 var app = express();
 
@@ -22,6 +28,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
